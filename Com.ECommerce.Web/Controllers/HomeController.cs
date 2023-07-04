@@ -17,6 +17,10 @@ namespace Com.ECommerce.Web.Controllers
         {
             return View();
         }
+        public IActionResult Shop()
+        {
+            return View();
+        }
 
         public IActionResult Privacy()
         {
