@@ -7,36 +7,34 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Com.ECommerce.Web.Data;
 using Com.ECommerce.Web.Models;
+using Com.ECommerce.Web.Services;
 
 namespace Com.ECommerce.Web.Controllers
 {
     public class ProductCategoriesController : Controller
     {
-        private readonly ECommerceDBContext _context;
+        private readonly IProductCategoryService _service;
 
-        public ProductCategoriesController(ECommerceDBContext context)
+        public ProductCategoriesController(IProductCategoryService service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: ProductCategories
         public async Task<IActionResult> Index()
         {
-              return _context.ProductCategory != null ? 
-                          View(await _context.ProductCategory.ToListAsync()) :
-                          Problem("Entity set 'ECommerceDBContext.ProductCategory'  is null.");
+              return View(await _service.GetAll());
         }
 
         // GET: ProductCategories/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.ProductCategory == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var productCategory = await _context.ProductCategory
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var productCategory = await _service.GetById(id??0);
             if (productCategory == null)
             {
                 return NotFound();
@@ -60,8 +58,7 @@ namespace Com.ECommerce.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(productCategory);
-                await _context.SaveChangesAsync();
+                await _service.Create(productCategory);
                 return RedirectToAction(nameof(Index));
             }
             return View(productCategory);
@@ -70,12 +67,12 @@ namespace Com.ECommerce.Web.Controllers
         // GET: ProductCategories/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.ProductCategory == null)
+            if (id == null||id==0)
             {
                 return NotFound();
             }
 
-            var productCategory = await _context.ProductCategory.FindAsync(id);
+            var productCategory = await _service.GetById(id ?? 0);
             if (productCategory == null)
             {
                 return NotFound();
@@ -99,8 +96,7 @@ namespace Com.ECommerce.Web.Controllers
             {
                 try
                 {
-                    _context.Update(productCategory);
-                    await _context.SaveChangesAsync();
+                    await _service.Update(productCategory);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -121,13 +117,12 @@ namespace Com.ECommerce.Web.Controllers
         // GET: ProductCategories/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.ProductCategory == null)
+            if (id == null || id == 0)
             {
                 return NotFound();
             }
 
-            var productCategory = await _context.ProductCategory
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var productCategory = await _service.GetById(id ?? 0);
             if (productCategory == null)
             {
                 return NotFound();
@@ -141,23 +136,14 @@ namespace Com.ECommerce.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.ProductCategory == null)
-            {
-                return Problem("Entity set 'ECommerceDBContext.ProductCategory'  is null.");
-            }
-            var productCategory = await _context.ProductCategory.FindAsync(id);
-            if (productCategory != null)
-            {
-                _context.ProductCategory.Remove(productCategory);
-            }
-            
-            await _context.SaveChangesAsync();
+
+            await _service.Delete(id);
             return RedirectToAction(nameof(Index));
         }
 
         private bool ProductCategoryExists(int id)
         {
-          return (_context.ProductCategory?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_service.GetById!=null);
         }
     }
 }

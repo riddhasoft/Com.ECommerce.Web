@@ -1,13 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Com.ECommerce.Web.Data;
+using Com.ECommerce.Web.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ECommerceDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ECommerceDBContext") ?? throw new InvalidOperationException("Connection string 'ECommerceDBContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddTransient<IProductCategoryService, ProductCategoryService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
