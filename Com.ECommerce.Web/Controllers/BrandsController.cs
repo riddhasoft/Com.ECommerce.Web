@@ -7,41 +7,30 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Com.ECommerce.Web.Data;
 using Com.ECommerce.Web.Models;
+using Com.ECommerce.Web.Services;
 
 namespace Com.ECommerce.Web.Controllers
 {
     public class BrandsController : Controller
     {
-        private readonly ECommerceDBContext _context;
+        private IBrandService _service;
 
-        public BrandsController(ECommerceDBContext context)
+        public BrandsController(IBrandService service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: Brands
         public async Task<IActionResult> Index()
         {
-              return _context.Brand != null ? 
-                          View(await _context.Brand.ToListAsync()) :
-                          Problem("Entity set 'ECommerceDBContext.Brand'  is null.");
+            IEnumerable<Brand> result = await _service.Get();
+            return View(result);
         }
 
         // GET: Brands/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Brand == null)
-            {
-                return NotFound();
-            }
-
-            var brand = await _context.Brand
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (brand == null)
-            {
-                return NotFound();
-            }
-
+            var brand = await _service.Get(id??0);
             return View(brand);
         }
 
@@ -60,8 +49,7 @@ namespace Com.ECommerce.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(brand);
-                await _context.SaveChangesAsync();
+                await _service.Create(brand);
                 return RedirectToAction(nameof(Index));
             }
             return View(brand);
@@ -70,12 +58,12 @@ namespace Com.ECommerce.Web.Controllers
         // GET: Brands/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Brand == null)
+            if (id == null || id == 0)
             {
                 return NotFound();
             }
 
-            var brand = await _context.Brand.FindAsync(id);
+            var brand = await _service.Get(id??0);
             if (brand == null)
             {
                 return NotFound();
@@ -99,8 +87,7 @@ namespace Com.ECommerce.Web.Controllers
             {
                 try
                 {
-                    _context.Update(brand);
-                    await _context.SaveChangesAsync();
+                     await _service.Update(brand);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -121,13 +108,12 @@ namespace Com.ECommerce.Web.Controllers
         // GET: Brands/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Brand == null)
+            if (id == null || id == 0)
             {
                 return NotFound();
             }
 
-            var brand = await _context.Brand
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var brand = await _service.Get(id??0);
             if (brand == null)
             {
                 return NotFound();
@@ -141,23 +127,15 @@ namespace Com.ECommerce.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Brand == null)
-            {
-                return Problem("Entity set 'ECommerceDBContext.Brand'  is null.");
-            }
-            var brand = await _context.Brand.FindAsync(id);
-            if (brand != null)
-            {
-                _context.Brand.Remove(brand);
-            }
-            
-            await _context.SaveChangesAsync();
+
+            var brand = await _service.Delete(id);
             return RedirectToAction(nameof(Index));
         }
 
+
         private bool BrandExists(int id)
         {
-          return (_context.Brand?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_service.Get(id) != null);
         }
     }
 }

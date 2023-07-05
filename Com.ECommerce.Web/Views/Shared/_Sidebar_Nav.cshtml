@@ -45,6 +45,19 @@
                 <a class="collapse-item" asp-controller="ProductCategories" asp-action="Index">View Courses</a>
             </div>
         </div>
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsebrand"
+           aria-expanded="true" aria-controls="collapseTwo">
+            <i class="fas fa-fw fa-cog"></i>
+            <span>Brand</span>
+        </a>
+        <div id="collapsebrand" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Brand Category:</h6>
+                <a class="collapse-item" asp-controller="Brands" asp-action="Create">New Brand</a>
+                <a class="collapse-item" asp-controller="Brands" asp-action="Index">View Brand</a>
+            </div>
+        </div>
     </li>
 
     <hr class="sidebar-divider d-none d-md-block">
