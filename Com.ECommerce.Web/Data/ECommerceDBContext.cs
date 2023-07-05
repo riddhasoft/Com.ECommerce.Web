@@ -15,5 +15,7 @@ namespace Com.ECommerce.Web.Data
         }
 
         public DbSet<Com.ECommerce.Web.Models.ProductCategory> ProductCategory { get; set; } = default!;
+
+        public DbSet<Com.ECommerce.Web.Models.Brand>? Brand { get; set; }
     }
 }
