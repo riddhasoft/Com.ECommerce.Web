@@ -17,5 +17,7 @@ namespace Com.ECommerce.Web.Data
         public DbSet<Com.ECommerce.Web.Models.ProductCategory> ProductCategory { get; set; } = default!;
 
         public DbSet<Com.ECommerce.Web.Models.Product>? Product { get; set; }
+
+        public DbSet<Com.ECommerce.Web.Models.ProductSubCategory>? ProductSubCategory { get; set; }
     }
 }

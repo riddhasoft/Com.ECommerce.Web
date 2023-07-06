@@ -37,7 +37,7 @@ namespace Com.ECommerce.Web.Services
 
         public async Task<ProductCategory> GetById(int id)
         {
-            return await _db.ProductCategory.FindAsync(id);
+            return  await _db.ProductCategory.FindAsync(id);
         }
 
         public Task<int> Update(ProductCategory productCategory)

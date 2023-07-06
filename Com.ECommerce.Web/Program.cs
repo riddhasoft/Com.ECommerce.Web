@@ -10,6 +10,7 @@ builder.Services.AddDbContext<ECommerceDBContext>(options =>
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddTransient<IProductCategoryService, ProductCategoryService>();
+builder.Services.AddTransient<IProductSubCategoryService, ProductSubCategoryService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
