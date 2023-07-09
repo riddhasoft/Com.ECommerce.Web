@@ -7,7 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20230705043242_init.cs" />
+    <Compile Remove="Migrations\20230705043242_init.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Controllers\API\" />
+    <Folder Include="Migrations\" />
     <Folder Include="wwwroot\content\images\" />
   </ItemGroup>
 

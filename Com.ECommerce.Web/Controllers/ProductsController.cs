@@ -20,7 +20,7 @@ namespace Com.ECommerce.Web.Controllers
         private readonly ISelectlistService _selectlistService;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProductsController(ECommerceDBContext context, IWebHostEnvironment webHostEnvironment,ISelectlistService selectlistService)
+        public ProductsController(ECommerceDBContext context, IWebHostEnvironment webHostEnvironment, ISelectlistService selectlistService)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
@@ -30,9 +30,11 @@ namespace Com.ECommerce.Web.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
-              return _context.Product != null ? 
-                          View(await _context.Product.ToListAsync()) :
-                          Problem("Entity set 'ECommerceDBContext.Product'  is null.");
+            return _context.Product != null ?
+                        View(await _context.Product.Include(x => x.Brand)
+                        .Include(x => x.ProductSubCategory)
+                        .ThenInclude(x   => x.ProductCategory).ToListAsync()) :
+                        Problem("Entity set 'ECommerceDBContext.Product'  is null.");
         }
 
         // GET: Products/Details/5
@@ -54,17 +56,19 @@ namespace Com.ECommerce.Web.Controllers
         }
 
         // GET: Products/Create
-        public IActionResult Create()
+        public IActionResult Create(int? id)
         {
             var productCategories = _selectlistService.ProductCategories().ToList();
-            ViewBag.ProductCategories = new SelectList(productCategories, "Id", "Name");
-            var productSubCategories = _selectlistService.ProductSubCategories().ToList();
-            ViewBag.ProductSubCategories = new SelectList(productSubCategories, "Id", "Name", "ProductCategoryId");
+            ViewBag.ProductCategories = new SelectList(productCategories, "Id", "Name", id);
+
+
+            var productSubCategories = _selectlistService.ProductSubCategories().Where(x => x.ProductCategoryId == id).ToList();
+            ViewBag.ProductSubCategories = new SelectList(productSubCategories, "Id", "Name");
             var brand = _selectlistService.Brand().ToList();
             ViewBag.Brand = new SelectList(brand, "Id", "Name");
 
 
-            return  View();
+            return View();
         }
 
         // POST: Products/Create
@@ -72,38 +76,43 @@ namespace Com.ECommerce.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Price,Discount,ProductCategoryId,ProductSubCategoryId,BrandId,Rating,ImagePhoto,Description")] ProductDTO product)
+        public async Task<IActionResult> Create([Bind("Id,Name,Price,Discount,ProductSubCategoryId,BrandId,Rating,ImagePhoto,Description")] Product product, List<IFormFile> files)
         {
+
             if (ModelState.IsValid)
             {
-                if (product.ProductPhoto != null && product.ProductPhoto.Length > 0)
+
+                //var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "/wwwroot/ProjectsPhotos");
+                string uniqueFileName = "";
+                if (files.Count > 0)
                 {
-                    //var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "/wwwroot/ProjectsPhotos");
+                    var file = files[0];
                     string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "/content/images");
                     Directory.CreateDirectory(uploadsFolder);
-                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + product.ProductPhoto.FileName;
+                    uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
                     var filePath = Path.Combine(uploadsFolder, uniqueFileName);
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
-                        await product.ProductPhoto.CopyToAsync(fileStream);
+                        await file.CopyToAsync(fileStream);
                     }
-
-                    var completedProject = new Product()
-                    {
-                        Name = product.Name,
-                        Price = product.Price,
-                        Discount = product.Discount,
-                        ProductCategoryId = product.ProductCategoryId,
-                        ProductSubCategoryId = product.ProductSubCategoryId,
-                        BrandId = product.BrandId,
-                        Rating = product.Rating,
-                        ProductPhoto = uniqueFileName,
-
-
-                    };
-                    _context.Product.Add(completedProject);
-                    _context.SaveChanges();
                 }
+
+                var completedProject = new Product()
+                {
+                    Name = product.Name,
+                    Price = product.Price,
+                    Discount = product.Discount,
+                    //ProductCategoryId = product.ProductCategoryId,
+                    ProductSubCategoryId = product.ProductSubCategoryId,
+                    BrandId = product.BrandId,
+                    Rating = product.Rating,
+                    ProductPhoto = uniqueFileName,
+
+
+                };
+                _context.Product.Add(completedProject);
+                await _context.SaveChangesAsync();
+
                 RedirectToAction("Index");
 
                 // Save the uniqueFileName to your database or perform additional logic
@@ -194,7 +203,7 @@ namespace Com.ECommerce.Web.Controllers
             {
                 _context.Product.Remove(product);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -204,7 +213,7 @@ namespace Com.ECommerce.Web.Controllers
 
         private bool ProductExists(int id)
         {
-          return (_context.Product?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Product?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

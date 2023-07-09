@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Com.ECommerce.Web.Models
 {
+    /// <summary>
+    /// Sub categories-> Gadgets, Home Appliances
+    /// </summary>
     public class ProductSubCategory
     {
         [Key]
@@ -14,6 +17,10 @@ namespace Com.ECommerce.Web.Models
         
         public int ProductCategoryId { get; set; }
         [ValidateNever]
+
         public virtual ProductCategory ProductCategory { get; set; }
+
+        [ValidateNever]
+        public virtual ICollection<Product> Products { get; set; }
     }
 }
