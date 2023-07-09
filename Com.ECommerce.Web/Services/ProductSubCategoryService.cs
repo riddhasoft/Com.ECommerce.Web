@@ -29,6 +29,8 @@ namespace Com.ECommerce.Web.Services
 
         public async Task<IEnumerable<ProductSubCategory>> GetAll()
         {
+
+            await _db.ProductCategory.ToListAsync();
             return await _db.ProductSubCategory.ToListAsync();
         }
 
