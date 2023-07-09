@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Com.ECommerce.Web.Data;
 using Com.ECommerce.Web.Services;
+using System.ComponentModel.Design;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ECommerceDBContext>(options =>
@@ -9,8 +10,10 @@ builder.Services.AddDbContext<ECommerceDBContext>(options =>
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddTransient<IProductCategoryService, ProductCategoryService>();
-builder.Services.AddTransient<IProductSubCategoryService, ProductSubCategoryService>();
+builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
+builder.Services.AddScoped<IProductSubCategoryService, ProductSubCategoryService>();
+builder.Services.AddScoped<ISelectlistService, SelectlistService>();
+builder.Services.AddScoped<IBrandService, BrandService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

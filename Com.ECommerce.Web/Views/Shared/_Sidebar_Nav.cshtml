@@ -33,6 +33,20 @@
         Setup
     </div>
     <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseProduct"
+           aria-expanded="true" aria-controls="collapseTwo">
+            <i class="fas fa-fw fa-cog"></i>
+            <span>Product</span>
+        </a>
+        <div id="collapseProduct" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Product Category:</h6>
+                <a class="collapse-item" asp-controller="Products" asp-action="Create">Create New</a>
+                <a class="collapse-item" asp-controller="Products" asp-action="Index">View Courses</a>
+            </div>
+        </div>
+    </li>
+    <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseInstitute"
            aria-expanded="true" aria-controls="collapseTwo">
             <i class="fas fa-fw fa-cog"></i>
@@ -57,6 +71,20 @@
                 <h6 class="collapse-header">Product Sub Category:</h6>
                 <a class="collapse-item" asp-controller="ProductSubCategories" asp-action="Create">Create New</a>
                 <a class="collapse-item" asp-controller="ProductSubCategories" asp-action="Index">View Courses</a>
+            </div>
+        </div>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#brand"
+           aria-expanded="true" aria-controls="collapseTwo">
+            <i class="fas fa-fw fa-cog"></i>
+            <span>Product Sub Categories</span>
+        </a>
+        <div id="brand" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Product Sub Category:</h6>
+                <a class="collapse-item" asp-controller="Brands" asp-action="Create">Create New</a>
+                <a class="collapse-item" asp-controller="Brands" asp-action="Index">View Courses</a>
             </div>
         </div>
     </li>

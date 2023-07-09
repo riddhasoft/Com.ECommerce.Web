@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Com.ECommerce.Web.Models;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Com.ECommerce.Web.Data
 {
@@ -19,5 +14,7 @@ namespace Com.ECommerce.Web.Data
         public DbSet<Com.ECommerce.Web.Models.Product>? Product { get; set; }
 
         public DbSet<Com.ECommerce.Web.Models.ProductSubCategory>? ProductSubCategory { get; set; }
+
+        public DbSet<Com.ECommerce.Web.Models.Brand>? Brand { get; set; }
     }
 }
